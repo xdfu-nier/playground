@@ -129,6 +129,7 @@ export function addFile(file: OrchestratorFile) {
   compileFile(orchestrator.files[file.filename])
 }
 
+
 export function setActiveFile(name: string) {
   orchestrator.activeFilename = name
 }
@@ -150,6 +151,12 @@ export function removeAllFiles() {
   orchestrator.files = {}
 }
 
+export function addPackage(packageName: string, url: string) {
+  orchestrator.packages.push({
+    name: packageName,
+    url,
+  })
+}
 /**
  * Load a demo folder
  *
@@ -199,65 +206,71 @@ export const onShouldUpdateContent = shouldUpdateContent.on
 // openDemo('default')
 
 // App.vue
-const appTemplate = `
-<div
-  grid="~ flow-col gap-4"
-  place="content-center items-center"
-  h="screen"
-  font="mono"
-  >
-  <Coordinate label="X" :value="x" />
-  <Coordinate label="Y" :value="y" />
-</div>
-`
-const appScript = `
-import { useMouse } from '@vueuse/core'
-import Coordinate from './Coordinate.vue'
+// const appTemplate = `
+// <div
+//   grid="~ flow-col gap-4"
+//   place="content-center items-center"
+//   h="screen"
+//   font="mono"
+//   >
+//   <Coordinate label="X" :value="x" />
+//   <Coordinate label="Y" :value="y" />
+// </div>
+// `
+// const appScript = `
+// import { useMouse } from '@vueuse/core'
+// import Coordinate from './Coordinate.vue'
 
-const { x, y } = useMouse()
-`
+// const { x, y } = useMouse()
+// `
 
-// Coordinate.vue
-const coordinateTemplate = `
-<div
-  font="mono"
-  bg="light-500 dark:dark-500"
-  flex="~ col"
-  text="center"
-  p="2"
-  border="rounded"
->
-  <span text="4xl">{{ value }}</span>
-  <span text="sm dark:light-900 dark:opacity-50" m="t-2">Mouse {{ label }}</span>
-</div>
-`
+// // Coordinate.vue
+// const coordinateTemplate = `
+// <div
+//   font="mono"
+//   bg="light-500 dark:dark-500"
+//   flex="~ col"
+//   text="center"
+//   p="2"
+//   border="rounded"
+// >
+//   <span text="4xl">{{ value }}</span>
+//   <span text="sm dark:light-900 dark:opacity-50" m="t-2">Mouse {{ label }}</span>
+// </div>
+// `
 
-const coordinateScript = `
-defineProps({
-  label: String,
-  value: Number,
-})
-`
+// const coordinateScript = `
+// defineProps({
+//   label: String,
+//   value: Number,
+// })
+// `
 
 const initialPackages = [
+  // {
+  //   name: 'vue-demi',
+  //   source: 'unpkg',
+  //   description: 'Vue Demi (half in French) is a developing utility allows you to write Universal Vue Libraries for Vue 2 & 3',
+  //   url: 'https://unpkg.com/vue-demi/lib/index.mjs',
+  // },
+  // {
+  //   name: '@vueuse/shared',
+  //   source: 'unpkg',
+  //   description: 'Shared VueUse utilities.',
+  //   url: 'https://unpkg.com/@vueuse/shared@10.1.0/index.mjs',
+  // },
+  // {
+  //   name: '@vueuse/core',
+  //   source: 'unpkg',
+  //   description: 'Collection of essential Vue Composition Utilities',
+  //   url: 'https://unpkg.com/@vueuse/core@10.1.0/index.mjs',
+  // },
   {
-    name: 'vue-demi',
+    name: 'element-plus',
     source: 'unpkg',
-    description: 'Vue Demi (half in French) is a developing utility allows you to write Universal Vue Libraries for Vue 2 & 3',
-    url: 'https://unpkg.com/vue-demi/lib/index.mjs',
-  },
-  {
-    name: '@vueuse/shared',
-    source: 'unpkg',
-    description: 'Shared VueUse utilities.',
-    url: 'https://unpkg.com/@vueuse/shared@10.1.0/index.mjs',
-  },
-  {
-    name: '@vueuse/core',
-    source: 'unpkg',
-    description: 'Collection of essential Vue Composition Utilities',
-    url: 'https://unpkg.com/@vueuse/core@10.1.0/index.mjs',
-  },
+    url: 'https://unpkg.com/element-plus@2.10.2/dist/index.full.mjs'
+  }
+
 ]
 
 function loadInitialState() {
@@ -281,8 +294,9 @@ function loadInitialState() {
   }
   else {
     orchestrator.packages = initialPackages
-    addFile(new OrchestratorFile('App.vue', appTemplate.trim(), appScript.trim()))
-    addFile(new OrchestratorFile('Coordinate.vue', coordinateTemplate.trim(), coordinateScript.trim()))
+    addFile(new OrchestratorFile('App.vue','', ''))
+    // addFile(new OrchestratorFile('App.vue', appTemplate.trim(), appScript.trim()))
+    // addFile(new OrchestratorFile('Coordinate.vue', coordinateTemplate.trim(), coordinateScript.trim()))
     setActiveFile('App.vue')
     shouldUpdateContent.trigger(null)
   }

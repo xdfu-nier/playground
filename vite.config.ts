@@ -5,19 +5,37 @@ import WindiCSS from 'vite-plugin-windicss'
 import ViteComponents, { HeadlessUiResolver } from 'vite-plugin-components'
 import Icons, { ViteIconsResolver } from 'vite-plugin-icons'
 import { copyVuePlugin } from './plugins/copy-vue'
+import { resolve } from 'path';
 
 const prefix = 'monaco-editor/esm/vs'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  server: {
+    port: 3001
+  },
+  base: '/playground/',
   build: {
+   lib: {
+      entry: resolve(__dirname, 'lib/main.js'),
+      name: 'playground',
+      // the proper extensions will be added
+      fileName: 'playground',
+      formats: ['es', 'umd'],
+    },
+    outDir: './dist/playground',
     rollupOptions: {
+      external: ['vue'], 
       output: {
-        manualChunks: {
-          htmlWorker: ['./src/monaco/languages/html/html.worker'],
-          tsWorker: [`${prefix}/language/typescript/ts.worker`],
-          editorWorker: [`${prefix}/editor/editor.worker`],
+        inlineDynamicImports: true,
+         globals: {
+          vue: 'Vue' // 设置全局变量名，以便在 UMD 构建中使用
         },
+        // manualChunks: {
+        //   htmlWorker: ['./src/monaco/languages/html/html.worker'],
+        //   tsWorker: [`${prefix}/language/typescript/ts.worker`],
+        //   editorWorker: [`${prefix}/editor/editor.worker`],
+        // },
       },
     },
   },
