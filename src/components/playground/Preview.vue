@@ -87,7 +87,13 @@ function createSandbox() {
     importMap.imports = {}
 
   importMap.imports.vue = vueRuntimeUrl.value
-  const sandboxSrc = srcdoc.replace(/<!--IMPORT_MAP-->/, JSON.stringify(importMap))
+  let css = "";
+  Object.keys(importMap.imports).forEach((key) => {
+    if(importMap.imports[key].endsWith('.css')){
+      css += `<link rel="stylesheet" href="${importMap.imports[key]}">`
+    }
+  })
+  const sandboxSrc = srcdoc.replace(/<!--IMPORT_MAP-->/, JSON.stringify(importMap)).replace(/<!--IMPORT_CSS-->/, css)
   sandbox.srcdoc = sandboxSrc
   container.value.appendChild(sandbox)
   proxy = new PreviewProxy(sandbox, {

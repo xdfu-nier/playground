@@ -269,6 +269,11 @@ const initialPackages = [
     name: 'element-plus',
     source: 'unpkg',
     url: 'https://unpkg.com/element-plus@2.10.2/dist/index.full.mjs'
+  },
+  {
+    name: 'element-plus-css'
+    , source: 'unpkg'
+    , url: 'https://unpkg.com/element-plus/dist/index.css'
   }
 
 ]
