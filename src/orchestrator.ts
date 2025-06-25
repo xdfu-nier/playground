@@ -246,7 +246,7 @@ export const onShouldUpdateContent = shouldUpdateContent.on
 // })
 // `
 
-const initialPackages = [
+const initialPackages: any = [
   // {
   //   name: 'vue-demi',
   //   source: 'unpkg',
@@ -265,20 +265,29 @@ const initialPackages = [
   //   description: 'Collection of essential Vue Composition Utilities',
   //   url: 'https://unpkg.com/@vueuse/core@10.1.0/index.mjs',
   // },
-  {
-    name: 'element-plus',
-    source: 'unpkg',
-    url: 'https://unpkg.com/element-plus@2.10.2/dist/index.full.mjs'
-  },
-  {
-    name: 'element-plus-css'
-    , source: 'unpkg'
-    , url: 'https://unpkg.com/element-plus/dist/index.css'
-  }
-
+  // {
+  //   name: 'element-plus',
+  //   source: 'unpkg',
+  //   url: 'https://unpkg.com/element-plus@2.10.2/dist/index.full.mjs'
+  // },
+  // {
+  //   name: 'element-plus-css'
+  //   , source: 'unpkg'
+  //   , url: 'https://unpkg.com/element-plus/dist/index.css'
+  // },
+  // {
+  //   name:'ant-design-vue'
+  //   , source: 'unpkg'
+  //   , url: 'https://unpkg.com/ant-design-vue@4.0.5/dist/antd.js'
+  // },
+  // {
+  //   name: 'ant-design-vue-css'
+  //   , source: 'unpkg'
+  //   , url: 'https://unpkg.com/ant-design-vue@4.0.5/dist/reset.css'
+  // }
 ]
 
-function loadInitialState() {
+export function loadInitialState() {
   removeAllFiles()
 
   if (location.hash.slice(1)) {
@@ -307,6 +316,6 @@ function loadInitialState() {
   }
 }
 
-setTimeout(() => {
-  loadInitialState()
-}, 0)
+// setTimeout(() => {
+//   loadInitialState()
+// }, 0)
