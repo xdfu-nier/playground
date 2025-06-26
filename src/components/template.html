@@ -101,6 +101,14 @@
 		        send_error(e.message, e.stack)
 		      }
 		    }
+
+			if(action === 'copy_parent_window') {
+				if(ev.data.args) {
+					for(let key of ev.data.args) {
+						window[key] = parent.window[key]
+					}
+				}
+			}
 		  }
 
 		  window.addEventListener('message', handle_message, false)

@@ -5,27 +5,29 @@ import { orchestrator } from '~/orchestrator'
 
 var files = {}
 var importMap = {}
-const plugin = {
-  name: 'virtual-fs',
-  setup(build) {
-    // 拦截文件加载
-    build.onResolve({ filter: /.*/ }, args => {
-      // 👇 排除 Vue 和 Vue 子模块
-      if (args.path === 'vue' || args.path.startsWith('vue/')) {
-        return { path: args.path, external: true }
-      }
-      const path = new URL(args.path, 'file://' + args.resolveDir + '/').pathname
-      return { path, namespace: 'virtual' }
-    })
+const plugin = (externals={}) => {
+  return {
+    name: 'virtual-fs',
+    setup(build) {
+      // 拦截文件加载
+      build.onResolve({ filter: /.*/ }, args => {
+        // 👇 排除 Vue 和 Vue 子模块
+        if (args.path === 'vue' || args.path.startsWith('vue/') || externals[args.path]) {
+          return { path: args.path, external: true }
+        }
+        const path = new URL(args.path, 'file://' + args.resolveDir + '/').pathname
+        return { path, namespace: 'virtual' }
+      })
 
-    build.onLoad({ filter: /.*/, namespace: 'virtual' }, args => {
-      const contents = files[args.path]
-      if (!contents) throw new Error(`File not found: ${args.path}`)
-      return {
-        contents,
-        loader: 'js'
-      }
-    })
+      build.onLoad({ filter: /.*/, namespace: 'virtual' }, args => {
+        const contents = files[args.path]
+        if (!contents) throw new Error(`File not found: ${args.path}`)
+        return {
+          contents,
+          loader: 'js'
+        }
+      })
+    }
   }
 }
 // const bootstrapScript = `
@@ -47,7 +49,7 @@ const plugin = {
 //   script = null;\n
 // };\n
 // `
-export function build() {
+export function build(externals={}) {
   return new Promise((resolve, reject) => {
     if (!orchestrator.files) return inject();
     //清空files
@@ -61,8 +63,9 @@ export function build() {
     }
 
     const imports = Object.keys(importMap.imports)
-    if(imports.length === 0){
-      buildCallback(resolve, reject)
+    
+    if (imports.length === 0) {
+      buildCallback(resolve, reject,externals)
       return;
     }
     let getFilesCount = imports.length
@@ -72,35 +75,36 @@ export function build() {
         files[filePath] = text
         getFilesCount--
         if (getFilesCount === 0) {
-          buildCallback(resolve, reject)
+          buildCallback(resolve, reject,externals)
         }
       })
     })
-    
+
   })
 
 }
 
-async function buildCallback(resolve, reject) {
+async function buildCallback(resolve, reject,externals) {
   // const bootstrap = bootstrapScript.replace('<!--IMPORT_MAP-->', JSON.stringify(importMap))
-    await esbuild.initialize({
-      wasmURL: './node_modules/esbuild-wasm/esbuild.wasm'
-    })
-    const result = await esbuild.build({
-      entryPoints: ['App.vue'],
-      bundle: true,
-      write: false,
-      format: 'esm',
-      external: ['vue'],
-      plugins: [externalGlobalPlugin({
-        vue: 'window.Vue'
-      }), plugin
-      ],
-    })
-    await esbuild.stop()
-    //console.log(result.outputFiles[0].text)
-    // resolve(bootstrap + "\n" + result.outputFiles[0].text)
-    resolve(result.outputFiles[0].text)
+  await esbuild.initialize({
+    wasmURL: './node_modules/esbuild-wasm/esbuild.wasm'
+  })
+  const result = await esbuild.build({
+    entryPoints: ['App.vue'],
+    bundle: true,
+    write: false,
+    format: 'esm',
+    external: ['vue'],
+    plugins: [externalGlobalPlugin({
+      vue: 'window.Vue',
+      ...externals
+    }), plugin(externals)
+    ],
+  })
+  await esbuild.stop()
+  //console.log(result.outputFiles[0].text)
+  // resolve(bootstrap + "\n" + result.outputFiles[0].text)
+  resolve(result.outputFiles[0].text)
 }
 
 

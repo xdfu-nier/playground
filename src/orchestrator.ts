@@ -287,6 +287,14 @@ const initialPackages: any = [
   // }
 ]
 
+export function destoryState() {
+  removeAllFiles()
+  orchestrator.packages = []
+  orchestrator.activeFilename = 'App.vue'
+  orchestrator.errors = []
+  orchestrator.runtimeErrors = []
+}
+
 export function loadInitialState() {
   removeAllFiles()
 

@@ -32,6 +32,7 @@ useEventListener('keydown', (ev) => {
   >
     <img src="/vueuse.svg" class="w-12" />
     <span class="flex-1"></span>
+    <slot></slot>
     <Button
       icon
       text="base"

@@ -12,6 +12,7 @@ import { isDark } from '~/logic/dark'
 const container = ref()
 const runtimeError = ref()
 const runtimeWarning = ref()
+const sandboxLoaded = ref(false)
 let sandbox: HTMLIFrameElement
 let proxy: PreviewProxy
 let stopUpdateWatcher: WatchStopHandle
@@ -148,6 +149,7 @@ function createSandbox() {
   })
   sandbox.addEventListener('load', () => {
     proxy.handle_links()
+    sandboxLoaded.value = true
     stopUpdateWatcher = watchEffect(updatePreview)
   })
 }
@@ -180,6 +182,11 @@ async function updatePreview() {
     runtimeError.value = e.message
   }
 }
+const getProxy = () => proxy
+defineExpose({
+  getProxy,
+  sandboxLoaded,
+})
 </script>
 
 <template>

@@ -93,4 +93,8 @@ export class PreviewProxy {
   handle_links() {
     return this.iframe_command('catch_clicks', {})
   }
+
+  copy_parent_window(target: Array<string>) {
+    return this.iframe_command('copy_parent_window', target)
+  }
 }

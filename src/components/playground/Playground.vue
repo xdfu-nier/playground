@@ -5,6 +5,7 @@ import { Hako } from 'vue-hako'
 import { orchestrator, onShouldUpdateContent } from '~/orchestrator'
 import sizes from '~/data/screen-sizes.json'
 
+const previewRef = ref()
 const initialScript = ref('')
 const initialTemplate = ref('')
 const size = ref<keyof typeof sizes>('Default')
@@ -27,6 +28,9 @@ const onContentChanged = (source: string, content: string) => {
       orchestrator.activeFile.template = content
   }
 }
+defineExpose({
+  previewRef
+})
 </script>
 
 <template>
@@ -88,7 +92,7 @@ const onContentChanged = (source: string, content: string) => {
                   :height="height"
                   :disable-scaling="enabled"
                 >
-                  <Preview shadow="lg" bg="dark:dark-700 light-100" />
+                  <Preview ref="previewRef" shadow="lg" bg="dark:dark-700 light-100" />
                 </Hako>
               </div>
             </template>
