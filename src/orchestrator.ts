@@ -114,6 +114,16 @@ export function exportState() {
   }))
 }
 
+export function importState(files: Object,packages: Array<any>){
+  orchestrator.files = Object.entries(files).reduce((acc, [name, { template, script }]) => {
+    acc[name] = new OrchestratorFile(name, template, script)
+    return acc
+  }, {})
+
+  orchestrator.packages = packages
+  shouldUpdateContent.trigger(null)
+}
+
 
 /**
  * Add a file to the orchestrator
@@ -316,7 +326,7 @@ export function loadInitialState() {
   }
   else {
     orchestrator.packages = initialPackages
-    addFile(new OrchestratorFile('App.vue','', ''))
+    //addFile(new OrchestratorFile('App.vue','<div></div>', ''))
     // addFile(new OrchestratorFile('App.vue', appTemplate.trim(), appScript.trim()))
     // addFile(new OrchestratorFile('Coordinate.vue', coordinateTemplate.trim(), coordinateScript.trim()))
     setActiveFile('App.vue')

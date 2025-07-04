@@ -2,7 +2,7 @@
 // MIT License https://github.com/sveltejs/svelte-repl/blob/master/LICENSE
 
 let uid = 1
-
+import debounce from 'lodash.debounce'
 export class PreviewProxy {
   iframe: HTMLIFrameElement
   handlers: Record<string, Function>
@@ -25,6 +25,8 @@ export class PreviewProxy {
   destroy() {
     window.removeEventListener('message', this.handle_event)
   }
+
+  iframe_command_debounce = debounce(this.iframe_command, 100)
 
   iframe_command(action: string, args: any) {
     return new Promise((resolve, reject) => {
@@ -87,14 +89,14 @@ export class PreviewProxy {
   }
 
   eval(script: string | string[]) {
-    return this.iframe_command('eval', { script })
+    return this.iframe_command_debounce('eval', { script })
   }
 
   handle_links() {
-    return this.iframe_command('catch_clicks', {})
+    return this.iframe_command_debounce('catch_clicks', {})
   }
 
   copy_parent_window(target: Array<string>) {
-    return this.iframe_command('copy_parent_window', target)
+    return this.iframe_command_debounce('copy_parent_window', target)
   }
 }

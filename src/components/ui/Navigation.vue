@@ -1,16 +1,27 @@
 <script setup lang="ts">
 import { useVModel, useClipboard, useEventListener } from '@vueuse/core'
 import { isDark, toggleDark } from '~/logic/dark'
-import { exportState } from '~/orchestrator'
+import { exportState,importState } from '~/orchestrator'
+import { loadDraft } from '~/logic/draft'
+import { inject } from 'vue'
 
 const props = defineProps<{ modelValue: boolean }>()
 const isOpen = useVModel(props)
 const { copy } = useClipboard()
+const projectName:string | undefined = inject('projectName')
 
 const share = () => {
   const state = exportState()
   window.location.hash = state
   return copy(window.location.href)
+}
+
+const restore = () => {
+  const draft = loadDraft(projectName)
+  if (draft) {
+    importState(draft.files, draft.packages)
+  }
+  
 }
 
 useEventListener('keydown', (ev) => {
@@ -36,18 +47,25 @@ useEventListener('keydown', (ev) => {
     <Button
       icon
       text="base"
+      @click="restore"
+    >
+      <ic-outline-restore />
+    </Button>
+    <Button
+      icon
+      text="base"
       @click="toggleDark()"
     >
       <carbon-moon v-if="isDark" />
       <carbon-sun v-else />
     </Button>
-    <Button
+    <!-- <Button
       icon
       text="base"
       @click="share"
     >
       <carbon-share />
-    </Button>
+    </Button> -->
     <Button
       icon
       text="base"
@@ -55,13 +73,13 @@ useEventListener('keydown', (ev) => {
     >
       <carbon-settings />
     </Button>
-    <a href="https://github.com/wheatjs/vueuse-playground" target="_blank">
+    <!-- <a href="https://github.com/wheatjs/vueuse-playground" target="_blank">
       <Button
         icon
         text="base"
       >
         <mdi-github />
       </Button>
-    </a>
+    </a> -->
   </div>
 </template>

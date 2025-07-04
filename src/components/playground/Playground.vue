@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, inject } from 'vue'
 import { Splitpanes, Pane } from 'splitpanes'
 import { Hako } from 'vue-hako'
 import { orchestrator, onShouldUpdateContent } from '~/orchestrator'
 import sizes from '~/data/screen-sizes.json'
+import debounce from 'lodash.debounce'
+import { saveDraft } from '~/logic/draft'
 
 const previewRef = ref()
 const initialScript = ref('')
@@ -12,6 +14,7 @@ const size = ref<keyof typeof sizes>('Default')
 const enabled = computed(() => size.value === 'Default')
 const width = computed(() => sizes[size.value][0])
 const height = computed(() => sizes[size.value][1])
+const projectName:string | undefined = inject('projectName')
 
 onShouldUpdateContent(() => {
   if (orchestrator.activeFile) {
@@ -19,6 +22,11 @@ onShouldUpdateContent(() => {
     initialTemplate.value = orchestrator.activeFile?.template
   }
 })
+const storeDraft = debounce(() => {
+  if( orchestrator.activeFile?.script || orchestrator.activeFile?.template) {
+    saveDraft(projectName, orchestrator)
+  }
+},3000)
 
 const onContentChanged = (source: string, content: string) => {
   if (orchestrator.activeFile) {
@@ -27,6 +35,7 @@ const onContentChanged = (source: string, content: string) => {
     else if (source === 'template')
       orchestrator.activeFile.template = content
   }
+  storeDraft()
 }
 defineExpose({
   previewRef
