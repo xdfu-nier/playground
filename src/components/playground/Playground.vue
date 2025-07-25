@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, inject } from 'vue'
+import { ref, computed, inject, onMounted } from 'vue'
 import { Splitpanes, Pane } from 'splitpanes'
 import { Hako } from 'vue-hako'
 import { orchestrator, onShouldUpdateContent } from '~/orchestrator'
 import sizes from '~/data/screen-sizes.json'
 import debounce from 'lodash.debounce'
 import { saveDraft } from '~/logic/draft'
+import * as Orchestrator from '~/orchestrator'
 
 const previewRef = ref()
 const initialScript = ref('')
@@ -15,7 +16,13 @@ const enabled = computed(() => size.value === 'Default')
 const width = computed(() => sizes[size.value][0])
 const height = computed(() => sizes[size.value][1])
 const projectName:string | undefined = inject('projectName')
+const playgroundLoaded: Function | undefined = inject('playgroundLoaded')
 
+onMounted(() => {
+  if (playgroundLoaded) {
+    playgroundLoaded({Orchestrator})
+  }
+})
 onShouldUpdateContent(() => {
   if (orchestrator.activeFile) {
     initialScript.value = orchestrator.activeFile?.script
@@ -37,9 +44,6 @@ const onContentChanged = (source: string, content: string) => {
   }
   storeDraft()
 }
-defineExpose({
-  previewRef
-})
 </script>
 
 <template>

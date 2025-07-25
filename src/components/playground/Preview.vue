@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watchEffect, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watchEffect, watch, inject } from 'vue'
 import type { WatchStopHandle } from 'vue'
 // import { useElementSize, useCssVar } from '@vueuse/core'
 import srcdoc from '../template.html?raw'
@@ -12,7 +12,7 @@ import { isDark } from '~/logic/dark'
 const container = ref()
 const runtimeError = ref()
 const runtimeWarning = ref()
-const sandboxLoaded = ref(false)
+const sandboxLoaded: Function | undefined = inject('sandboxLoaded')
 let sandbox: HTMLIFrameElement
 let proxy: PreviewProxy
 let stopUpdateWatcher: WatchStopHandle
@@ -149,8 +149,8 @@ function createSandbox() {
   })
   sandbox.addEventListener('load', () => {
     proxy.handle_links()
-    sandboxLoaded.value = true
     stopUpdateWatcher = watchEffect(updatePreview)
+    sandboxLoaded && sandboxLoaded({proxy})
   })
 }
 async function updatePreview() {
@@ -182,11 +182,6 @@ async function updatePreview() {
     runtimeError.value = e.message
   }
 }
-const getProxy = () => proxy
-defineExpose({
-  getProxy,
-  sandboxLoaded,
-})
 </script>
 
 <template>

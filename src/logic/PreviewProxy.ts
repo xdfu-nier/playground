@@ -89,14 +89,14 @@ export class PreviewProxy {
   }
 
   eval(script: string | string[]) {
-    return this.iframe_command_debounce('eval', { script })
+    return this.iframe_command('eval', { script })
   }
 
   handle_links() {
-    return this.iframe_command_debounce('catch_clicks', {})
+    return this.iframe_command('catch_clicks', {})
   }
 
   copy_parent_window(target: Array<string>) {
-    return this.iframe_command_debounce('copy_parent_window', target)
+    return this.iframe_command('copy_parent_window', target)
   }
 }

@@ -4,9 +4,6 @@ import { ref } from 'vue'
 const playgroundRef = ref()
 
 const isOpen = ref(false)
-defineExpose({
-  playgroundRef
-})
 </script>
 
 <template>

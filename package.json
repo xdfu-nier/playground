@@ -23,6 +23,7 @@
     "@vueuse/core": "10.1.0",
     "@vueuse/integrations": "^10.1.0",
     "@vueuse/shared": "10.1.0",
+    "crypto-js": "^4.2.0",
     "esbuild-plugin-external-global": "^1.0.1",
     "esbuild-wasm": "^0.25.5",
     "file-saver": "^2.0.5",

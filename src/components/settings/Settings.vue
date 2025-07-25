@@ -15,6 +15,7 @@ const activeTab = ref('packages')
     overflow="y-auto"
     z="10"
     @close="isOpen = false"
+    class="headlessui-dialog-settings"
   >
     <div
       position="relative"
